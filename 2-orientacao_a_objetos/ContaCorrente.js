@@ -1,10 +1,40 @@
+import { Cliente } from "./Cliente.js";
+
 export class ContaCorrente{
     agencia;
-    // #saldo = 0 https://github.com/tc39/proposal-class-fields#private-fields;
+    _cliente;
+    // O static cria um atributo que vai pegar em todas as contas correntes
+    static numeroDeContas = 0;
 
-    // O '_' é uma boa pratica para avisar outros devs que não 
-    // seria legal mexer nessa classe fora da class
+    // #saldo = 0 https://github.com/tc39/proposal-class-fields#private-fields;
+    // O '_' é uma boa pratica para avisar outros devs que não seria legal mexer nessa classe fora da class
     _saldo = 0;
+
+
+
+    set cliente(novoValor){
+        // instanceof verifica se o valor vai ser algo relacionado a class chamada que é o Cliente 
+        // se for ele altera se não, não faz nada
+        if(novoValor instanceof Cliente) {
+            this._cliente = novoValor;
+        }
+    }
+
+    get cliente() {
+        return this._cliente;
+    }
+
+    get saldo() {
+        return this._saldo;
+    }
+
+
+    constructor(agencia, cliente) {
+        this.agencia = agencia;
+        this.cliente = cliente;
+        ContaCorrente.numeroDeContas += 1;
+    }
+
 
     sacar(valor){
         if(this._saldo >= valor){
@@ -20,6 +50,11 @@ export class ContaCorrente{
         }
 
         this._saldo += valor;
+    }
+
+    transferir(valor, conta){
+        const valorSacado = this.sacar(valor);
+        conta.depositar(valorSacado);
     }
 }
 
